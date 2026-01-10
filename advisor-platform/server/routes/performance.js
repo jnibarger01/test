@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { parse } from 'csv-parse/sync';
 import { query, getMany, transaction } from '../db/index.js';
+import { parseNumber, parseInteger } from '../utils/numberParsing.js';
 import { authenticateToken, authorizeRoles } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -75,32 +76,18 @@ router.post('/upload', authenticateToken, authorizeRoles('admin', 'manager'), up
         }
 
         const advisorId = record['Advisor'];
-        const name = record['Advisor Name'];
 
-        // Parse numbers (remove commas, convert to float)
-        const parseNum = (val) => {
-          const cleaned = (val || '').replace(/,/g, '').trim();
-          const num = parseFloat(cleaned);
-          return isNaN(num) ? 0 : num;
-        };
-
-        const parseInt = (val) => {
-          const cleaned = (val || '').replace(/,/g, '').trim();
-          const num = parseInt(cleaned, 10);
-          return isNaN(num) ? 0 : num;
-        };
-
-        const totalSales = parseNum(record['Labor & Parts']);
-        const roCount = parseInt(record['Repair Order Count']);
-        const elr = parseNum(record['Effective Labor Rate']);
-        const opCount = parseInt(record['Operation Count']);
-        const techHours = parseNum(record['Tech Hours']);
-        const laborSales = parseNum(record['Labor Sales']);
-        const partsSales = parseNum(record['Parts Sales']);
-        const laborAvg = parseNum(record['Labor Sale Average']);
-        const partsAvg = parseNum(record['Parts Sales Average']);
-        const totalAvg = parseNum(record['Labor & Parts Average']);
-        const techHoursAvg = parseNum(record['Tech Hours Average']);
+        const totalSales = parseNumber(record['Labor & Parts']);
+        const roCount = parseInteger(record['Repair Order Count']);
+        const elr = parseNumber(record['Effective Labor Rate']);
+        const opCount = parseInteger(record['Operation Count']);
+        const techHours = parseNumber(record['Tech Hours']);
+        const laborSales = parseNumber(record['Labor Sales']);
+        const partsSales = parseNumber(record['Parts Sales']);
+        const laborAvg = parseNumber(record['Labor Sale Average']);
+        const partsAvg = parseNumber(record['Parts Sales Average']);
+        const totalAvg = parseNumber(record['Labor & Parts Average']);
+        const techHoursAvg = parseNumber(record['Tech Hours Average']);
 
         // Calculate derived metrics
         const opsPerRO = roCount > 0 ? opCount / roCount : 0;

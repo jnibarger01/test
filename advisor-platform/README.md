@@ -77,6 +77,19 @@ The application will be available at:
 - Frontend: http://localhost:5173
 - Backend API: http://localhost:3000
 
+### Quality checks
+
+```bash
+# Run unit tests
+npm run test
+
+# Lint the codebase
+npm run lint
+
+# Check formatting
+npm run format
+```
+
 ## Environment Variables
 
 Create a `.env` file in the project root:
